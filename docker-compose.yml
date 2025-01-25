@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  registerservicedb:
+    image: mongo
+    networks:
+        - invoicearchive
+
+  storeservicedb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:
+        - invoicearchive
+
+  rabbitmq:
+    image: rabbitmq:3.8.14-management
+    networks:
+        - invoicearchive
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.1
+    networks:
+        - invoicearchive
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.1
+    networks:
+        - invoicearchive
+
+  invoiceapi:
+    image: invoicearchive-invoiceapi
+    networks:
+        - invoicearchive
+    build:
+      context: .
+      dockerfile: InvoiceArchive.WebAPI/Dockerfile
+      
+volumes: 
+    invoicearchive-mongovolume:
+    invoicearchive-sqlvolume:
+    invoicearchive-elkvolume:
+
+networks:
+  invoicearchive:
+    name: invoicearchive-network
+    driver: bridge
+    
